@@ -13,7 +13,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.cos.jwtex01.config.auth.PrincipalDetails;
 import com.cos.jwtex01.dto.LoginRequestDto;
+import com.cos.jwtex01.model.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -79,8 +81,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		System.out.println("Authentication 실행 전");
 		Authentication authentication = 		
 				authenticationManager.authenticate(authenticationToken); //provider의 일을 위임하고 있음.
-		
-		System.out.println("Authentication : "+authentication.getPrincipal());
+		PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
+		System.out.println("Authentication : "+principalDetails.getUser().getUsername());
 		return authentication;
 	}
 
