@@ -1,6 +1,7 @@
 package com.cos.jwtex01.config.jwt;
 
 import java.io.IOException;
+import java.util.Date;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -13,6 +14,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.cos.jwtex01.config.auth.PrincipalDetails;
 import com.cos.jwtex01.dto.LoginRequestDto;
 import com.cos.jwtex01.model.User;
@@ -91,7 +94,17 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	@Override
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
 			Authentication authResult) throws IOException, ServletException {
-		super.successfulAuthentication(request, response, chain, authResult);
+		
+		PrincipalDetails principalDetails = (PrincipalDetails) authResult.getPrincipal();
+		//클레임은 페이로드에 들어감 선택적이나 iss-토큰 발급자,sub-토큰제목,exp-만료기간 이정도는 넣는게 좋다
+		//비공개 클레임이 제일 중요하다. 유저정보에서 민감하지 않는것들만 넣는다.(ex : 패스워드, 이메일, 번호)
+		//Payload를 열때 토큰을 검증하고 만료되었는지보고 
+		String jwtToken = JWT.create()
+				.withSubject(principalDetails.getUsername())//sub
+				.withExpiresAt(new Date(System.currentTimeMillis()+864000000/10))//만료시간 10->1일
+				.withClaim("id", principalDetails.getUser().getId())//PK ㅣㅂ공개클레임
+				.withClaim("username", principalDetails.getUser().getUsername())
+				.sign(Algorithm.HMAC512("펭귄악어".getBytes()));//getBytes하면 조금더 ?
+		response.addHeader("Authorization", "Bearer "+jwtToken);//헤더
 	}
-	
 }
