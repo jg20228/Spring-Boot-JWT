@@ -1,7 +1,6 @@
 package com.cos.jwtex01.config.jwt;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -23,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter{
 	//모든것을 오버라이드해서 sysout 찍으면 순서를 알 수 있음
-	
+
 	//@RequiredArgsConstructor로 DI했음
 	private final AuthenticationManager authenticationManager;
 
@@ -36,6 +35,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	@Override
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
 			throws AuthenticationException {
+		System.out.println("JwtAuthenticationFilter : 진입");
+		
 		//request에서 username , password를 파싱해서 자바 Object로 받기
 		//objectmapper를 쓰면 꺼내짐
 		ObjectMapper om = new ObjectMapper();
@@ -50,7 +51,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-		
+		System.out.println("JwtAuthenticationFilter : 토큰생성 준비");
+
 		//유저네임 패스워드 토큰 생성
 		//principal = 인증 주체
 		//credentials = 비밀번호
@@ -59,7 +61,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 						loginRequestDto.getUsername(), 
 						loginRequestDto.getPassword() 
 						);
-				
+		System.out.println(authenticationToken.getCredentials()); //비밀번호
+		System.out.println(authenticationToken.getName()); //ssar
+		System.out.println(authenticationToken.getPrincipal()); //ssar 
+		System.out.println(authenticationToken.getAuthorities()); //USER ROLE???
+		System.out.println("JwtAuthenticationFilter : 토큰생성 완료");
+
 		//authenticate() 함수가 호출 되면 인증 provider가 userDetailService의 
 		//loadUserByUsername(토큰의 첫번째 파라메터)를 호출하고
 		//UserDetails를 리턴 받아서 토큰의 두번째 파라메터(credential)과
@@ -69,11 +76,11 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		//TIP : 인증 프로바이더의 디폴트 서비스는 UserDetailsServie 타입
 		//TIP : 인증 프로바이더의 디폴트 암호화 방식은 BCryptePassword
 		//결론은 인증 프로바이더에게 알려줄 필요가 없음.
+		System.out.println("Authentication 실행 전");
+		Authentication authentication = 		
+				authenticationManager.authenticate(authenticationToken); //provider의 일을 위임하고 있음.
 		
-		Authentication authentication = 
-				authenticationManager.authenticate(authenticationToken);
-		
-		
+		System.out.println("Authentication : "+authentication.getPrincipal());
 		return authentication;
 	}
 
@@ -82,7 +89,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	@Override
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
 			Authentication authResult) throws IOException, ServletException {
-		// TODO Auto-generated method stub
 		super.successfulAuthentication(request, response, chain, authResult);
 	}
 	

@@ -7,8 +7,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.cos.jwtex01.config.jwt.JwtAuthenticationFilter;
+import com.cos.jwtex01.config.jwt.MyFilter;
 
 @Configuration
 @EnableWebSecurity //시큐리티 활성화 -> 기본 스프링 필터체인에 등록
@@ -39,5 +41,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 					.access("hasRole('ROLE_ADMIN')")
 				.anyRequest().permitAll();
 				//.authenticated()을 걸면 위 페이지 외에 모두 인증이 필요함
+			//.and()
+			//이렇게하면 모든곳에서 필터가 실행된다.
+			//.addFilterBefore(new MyFilter(), UsernamePasswordAuthenticationFilter.class);
 	}
 }
