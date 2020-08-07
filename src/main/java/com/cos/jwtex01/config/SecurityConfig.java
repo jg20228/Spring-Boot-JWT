@@ -1,10 +1,14 @@
 package com.cos.jwtex01.config;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+
+import com.cos.jwtex01.config.jwt.JwtAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity //시큐리티 활성화 -> 기본 스프링 필터체인에 등록
@@ -19,7 +23,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 				.formLogin().disable() //form 로긴 막음
 				.httpBasic().disable() //http Jsession방식 사용안함
 				//필터 추가
-				.addFilter(null) //내가 만든 인증 필터 
+				.addFilter(new JwtAuthenticationFilter(authenticationManager())) //내가 만든 인증 필터 
 				.addFilter(null)
 				.authorizeRequests()//모든 권한 요청에 대해서
 				//antMatchers를 걸고 네거티브 방식 사용

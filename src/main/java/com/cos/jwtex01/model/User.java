@@ -46,6 +46,7 @@ public class User {
     }
 
     //ENUM으로 안하고 ,로 해서 구분해서 ROLE을 입력 -> 그걸 파싱
+    //데이터 베이스 원자성을 파괴함 (상황에 따라서 다르기 때문에)
     public List<String> getRoleList(){
         if(this.roles.length() > 0){
             return Arrays.asList(this.roles.split(","));
