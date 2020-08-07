@@ -29,6 +29,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
 	
 	//1번 Authentication 객체 만들어서 리턴 => 의존 : AuthenticationManager (필터체인으로 가서 또 다른 것을 타게된다는것)
+	
+	//인증 요청시에 실행되는 함수(attemptAuthentication) => /login 일때만 
+	
 	//여기서 request랑 response를 변형도 가능
 	@Override
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
@@ -57,7 +60,16 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 						loginRequestDto.getPassword() 
 						);
 				
-		//Authentication 객체는 자동으로 UserDetailsService를 통해서 만들어진다. 
+		//authenticate() 함수가 호출 되면 인증 provider가 userDetailService의 
+		//loadUserByUsername(토큰의 첫번째 파라메터)를 호출하고
+		//UserDetails를 리턴 받아서 토큰의 두번째 파라메터(credential)과
+		//UserDetails(DB값)의 getPassword() 함수로 비교해서 동일하면
+		// Authentication 객체를 만들어서 필터체인으로 리턴해준다.
+		
+		//TIP : 인증 프로바이더의 디폴트 서비스는 UserDetailsServie 타입
+		//TIP : 인증 프로바이더의 디폴트 암호화 방식은 BCryptePassword
+		//결론은 인증 프로바이더에게 알려줄 필요가 없음.
+		
 		Authentication authentication = 
 				authenticationManager.authenticate(authenticationToken);
 		
