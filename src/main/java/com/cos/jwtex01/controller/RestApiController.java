@@ -2,6 +2,8 @@ package com.cos.jwtex01.controller;
 
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cos.jwtex01.config.auth.SessionUser;
 import com.cos.jwtex01.model.User;
 import com.cos.jwtex01.repository.UserRepository;
 
@@ -27,6 +30,17 @@ public class RestApiController {
 	//AutoWired의 기본 원리는 생성자이다.
 	private final UserRepository userRepository;
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
+	
+	@GetMapping("user")
+	public String user(HttpSession session) {
+		SessionUser sessionUser =(SessionUser) session.getAttribute("sessionUser");
+		System.out.println("principal : "+sessionUser.getId());
+		System.out.println("principal : "+sessionUser.getUsername());
+		System.out.println("principal : "+sessionUser.getRoles());
+		return "<h1>user</h1>";
+	}
+	
+	
 	
 	// 모든 사람이 접근 가능
 	@GetMapping("home")

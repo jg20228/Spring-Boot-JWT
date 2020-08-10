@@ -51,8 +51,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 				.addFilter(new JwtAuthorizationFilter(authenticationManager(),userRepository))
 				.authorizeRequests()//모든 권한 요청에 대해서
 				//antMatchers를 걸고 네거티브 방식 사용
-				.antMatchers("/api/v1/manager/**")
+				.antMatchers("/api/v1/user/**")
 					.access("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
+				.antMatchers("/api/v1/manager/**")
+					.access("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
 				.antMatchers("/api/v1/admin/**")
 					.access("hasRole('ROLE_ADMIN')")
 				.anyRequest().permitAll();

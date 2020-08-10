@@ -6,6 +6,7 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -19,6 +20,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.cos.jwtex01.config.auth.PrincipalDetails;
+import com.cos.jwtex01.config.auth.SessionUser;
 import com.cos.jwtex01.model.User;
 import com.cos.jwtex01.repository.UserRepository;
 
@@ -58,39 +60,23 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 				.replace(JwtProperties.TOKEN_PREFIX, "") // Bearer 날려야 진정한 토큰이라서
 				.replace("=", "").replace(" ", "");
 
-		// 5. 토큰 검증
+		// 5. 토큰 검증 (이게 인증이기 때문에 AuthenticationManager도 필요 없음)
+		//내가 SecurityContext에 직접 접근해서 세션을 만들때 자동으로 UserDetailsService에 있는 loadByusername이 호출된다.
 		String username = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(token)// 서명
 				.getClaim("username").asString();
-
-		// 비밀번호 안넣고 서명이 끝나면 매니저는 필요없음
-		Authentication authentication = new UsernamePasswordAuthenticationToken(username, 1234);
 		
-		//PrincipalDetail를 자동 호출되고 password가 없어서 안됨
-		SecurityContextHolder.getContext().setAuthentication(authentication); 
+		if(username != null) {
+			User user = userRepository.findByUsername(username);
+			SessionUser sessionUser = SessionUser.builder()
+					.id(user.getId())
+					.username(user.getUsername())
+					.roles(user.getRoleList())
+					.build();
+			
+			//세션을 이거 쓸건데 어노테이션 @를 쓰는법을 알려줄것이다. user에서 @SessionUser sessionUser
+			HttpSession session = request.getSession();
+			session.setAttribute("sessionUser", sessionUser);
+		}
 		chain.doFilter(request, response);
-
-		// if(username != null) {
-		// AuthenticationManager authenticationManager = getAuthenticationManager();
-
-		/*
-		 * User user = userRepository.findByUsername(username);
-		 * 
-		 * 
-		 * UsernamePasswordAuthenticationToken authenticationToken = new
-		 * UsernamePasswordAuthenticationToken( user.getUsername(), 1234 );
-		 * 
-		 * System.out.println("ROLES"+user.getRoles());
-		 * System.out.println(authenticationToken.getAuthorities());
-		 */
-
-		/*
-		 * Authentication authentication =
-		 * authenticationManager.authenticate(authenticationToken);
-		 * //chain.doFilter(request, response);
-		 */
-		// }
-		
-
 	}
-
 }
