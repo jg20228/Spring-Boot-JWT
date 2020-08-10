@@ -17,7 +17,7 @@ public class User {
     private long id;
     private String username;
     private String password;
-    private String roles = "";
+    private String roles;
 
     //ENUM으로 안하고 ,로 해서 구분해서 ROLE을 입력 -> 그걸 파싱
     //데이터 베이스 원자성을 파괴함 (상황에 따라서 다르기 때문에)

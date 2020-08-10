@@ -101,10 +101,11 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		//Payload를 열때 토큰을 검증하고 만료되었는지보고 
 		String jwtToken = JWT.create()
 				.withSubject(principalDetails.getUsername())//sub
-				.withExpiresAt(new Date(System.currentTimeMillis()+864000000/10))//만료시간 10->1일
+				.withExpiresAt(new Date(System.currentTimeMillis()+JwtProperties.EXPIREATION_TIME))//만료시간 10일
 				.withClaim("id", principalDetails.getUser().getId())//PK ㅣㅂ공개클레임
 				.withClaim("username", principalDetails.getUser().getUsername())
-				.sign(Algorithm.HMAC512("펭귄악어".getBytes()));//getBytes하면 조금더 ?
-		response.addHeader("Authorization", "Bearer "+jwtToken);//헤더
+				.sign(Algorithm.HMAC512(JwtProperties.SECRET.getBytes()));//getBytes하면 조금더 ?
+		
+		response.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX+jwtToken);//헤더
 	}
 }
