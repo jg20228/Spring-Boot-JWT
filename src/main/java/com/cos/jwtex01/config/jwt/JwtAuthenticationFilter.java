@@ -106,7 +106,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 				.withClaim("id", principalDetails.getUser().getId())//PK ㅣㅂ공개클레임
 				.withClaim("username", principalDetails.getUser().getUsername())
 				.sign(Algorithm.HMAC512(JwtProperties.SECRET.getBytes()));//getBytes하면 조금더 ?
-		
+		//여기?
 		response.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX+jwtToken);//헤더
 		//쿠키에 담을때 set-cookies 쿠키값에는 여러가지 있는데 ;으로 나뉘어져 있음
 		//이건 예시라 아님 밑에 두개 response.addHeader("set-cookies", JwtProperties.TOKEN_PREFIX+jwtToken);//헤더
