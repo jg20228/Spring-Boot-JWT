@@ -7,6 +7,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.AccessDeniedException;
@@ -22,11 +23,15 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.cos.jwtex01.config.jwt.JwtAuthenticationFilter;
 import com.cos.jwtex01.config.jwt.JwtAuthorizationFilter;
 import com.cos.jwtex01.config.jwt.MyFilter;
+import com.cos.jwtex01.repository.UserRepository;
 
 @Configuration
 @EnableWebSecurity //시큐리티 활성화 -> 기본 스프링 필터체인에 등록
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
+	@Autowired
+	private UserRepository userRepository;
+	
 	@Bean//@EnableWebSecurity로 인해서 IOC될때 같이 된다.
 	public BCryptPasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
@@ -43,7 +48,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 				.httpBasic().disable() //http Jsession방식 사용안함
 				//필터 추가
 				.addFilter(new JwtAuthenticationFilter(authenticationManager())) //내가 만든 인증 필터 
-				.addFilter(new JwtAuthorizationFilter(authenticationManager()))
+				.addFilter(new JwtAuthorizationFilter(authenticationManager(),userRepository))
 				.authorizeRequests()//모든 권한 요청에 대해서
 				//antMatchers를 걸고 네거티브 방식 사용
 				.antMatchers("/api/v1/manager/**")
