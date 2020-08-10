@@ -24,6 +24,8 @@ public class PrincipalDetailsService implements UserDetailsService {
 		
 		if(user != null) {
 			System.out.println("해당 유저를 찾았어요!");
+			//session.setAttribute("loginUser",user);
+			//이때 내부적으로 로그인이 성공되어서 Authentication가 생성됨
 			return new PrincipalDetails(user);
 		}
 		System.out.println("해당 유저를 못찾았어요!");

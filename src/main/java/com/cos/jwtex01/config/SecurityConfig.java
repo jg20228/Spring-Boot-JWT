@@ -20,6 +20,7 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.cos.jwtex01.config.jwt.JwtAuthenticationFilter;
+import com.cos.jwtex01.config.jwt.JwtAuthorizationFilter;
 import com.cos.jwtex01.config.jwt.MyFilter;
 
 @Configuration
@@ -42,7 +43,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 				.httpBasic().disable() //http Jsession방식 사용안함
 				//필터 추가
 				.addFilter(new JwtAuthenticationFilter(authenticationManager())) //내가 만든 인증 필터 
-				//.addFilter(null)
+				.addFilter(new JwtAuthorizationFilter(authenticationManager()))
 				.authorizeRequests()//모든 권한 요청에 대해서
 				//antMatchers를 걸고 네거티브 방식 사용
 				.antMatchers("/api/v1/manager/**")

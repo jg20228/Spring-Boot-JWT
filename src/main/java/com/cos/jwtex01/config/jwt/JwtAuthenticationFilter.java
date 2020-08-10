@@ -5,6 +5,7 @@ import java.util.Date;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -107,5 +108,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 				.sign(Algorithm.HMAC512(JwtProperties.SECRET.getBytes()));//getBytes하면 조금더 ?
 		
 		response.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX+jwtToken);//헤더
+		//쿠키에 담을때 set-cookies 쿠키값에는 여러가지 있는데 ;으로 나뉘어져 있음
+		//이건 예시라 아님 밑에 두개 response.addHeader("set-cookies", JwtProperties.TOKEN_PREFIX+jwtToken);//헤더
+		//Cookie cookie = new Cookie("Authorization",jwtToken);
+		//response.addCookie(cookie);
 	}
 }
