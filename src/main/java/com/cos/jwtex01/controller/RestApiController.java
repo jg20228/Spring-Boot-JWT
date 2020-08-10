@@ -32,7 +32,7 @@ public class RestApiController {
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 	
 	@GetMapping("user")
-	public String user(HttpSession session) {
+	public String user() {
 		/*
 		 * SessionUser sessionUser =(SessionUser) session.getAttribute("sessionUser");
 		 * System.out.println("principal : "+sessionUser.getId());
