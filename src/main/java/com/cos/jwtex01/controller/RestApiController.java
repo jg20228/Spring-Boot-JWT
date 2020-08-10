@@ -33,10 +33,12 @@ public class RestApiController {
 	
 	@GetMapping("user")
 	public String user(HttpSession session) {
-		SessionUser sessionUser =(SessionUser) session.getAttribute("sessionUser");
-		System.out.println("principal : "+sessionUser.getId());
-		System.out.println("principal : "+sessionUser.getUsername());
-		System.out.println("principal : "+sessionUser.getRoles());
+		/*
+		 * SessionUser sessionUser =(SessionUser) session.getAttribute("sessionUser");
+		 * System.out.println("principal : "+sessionUser.getId());
+		 * System.out.println("principal : "+sessionUser.getUsername());
+		 * System.out.println("principal : "+sessionUser.getRoles());
+		 */
 		return "<h1>user</h1>";
 	}
 	
